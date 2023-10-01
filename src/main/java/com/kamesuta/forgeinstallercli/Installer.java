@@ -5,6 +5,8 @@ import com.kamesuta.forgeinstallercli.impl.V1ClientInstall;
 import net.minecraftforge.installer.actions.ActionCanceledException;
 import net.minecraftforge.installer.actions.ProgressCallback;
 import net.minecraftforge.installer.json.Install;
+import net.minecraftforge.installer.json.InstallV1;
+import net.minecraftforge.installer.json.Util;
 
 import java.io.File;
 
@@ -52,25 +54,21 @@ public class Installer {
      * @return true if success
      */
     public static boolean runClientInstall(ProgressCallback monitor, File target, File installerJar) {
-        // Detect Forge installer version
-        boolean v1;
-        try {
-            Class.forName("net.minecraftforge.installer.json.InstallV1");
-            v1 = true;
-        } catch (ClassNotFoundException e) {
-            v1 = false;
-        }
-
         // Run Forge installer
         try {
-            if (v1) {
+            Class<?> installerClass = Util.class.getMethod("loadInstallProfile").getReturnType();
+            if (installerClass.equals(Install.class)) {
+                // V0 installer
+                Install profile = V0ClientInstall.loadInstallProfile();
+                return new V0ClientInstall(profile, monitor).run(target, input -> true);
+            } else if (installerClass.equals(InstallV1.class)) {
+                // V1 installer
                 Install profile = V1ClientInstall.loadInstallProfile();
                 return new V1ClientInstall(profile, monitor).run(target, input -> true, installerJar);
             } else {
-                Install profile = V0ClientInstall.loadInstallProfile();
-                return new V0ClientInstall(profile, monitor).run(target, input -> true);
+                throw new IllegalArgumentException("Unable to determine the installer version. (" + installerClass + ")");
             }
-        } catch (ActionCanceledException e) {
+        } catch (ReflectiveOperationException | ActionCanceledException e) {
             throw new RuntimeException(e);
         }
     }

@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.function.Predicate;
 
 /**
- * Installer for Forge V0 installer. (1.12.1 and earlier)
+ * Installer for Forge V0 installer.
  */
 public class V0ClientInstall extends ClientInstall {
     public V0ClientInstall(Install profile, ProgressCallback monitor) {

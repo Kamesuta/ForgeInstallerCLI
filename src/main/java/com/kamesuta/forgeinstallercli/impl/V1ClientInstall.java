@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.function.Predicate;
 
 /**
- * Installer for Forge V1 installer. (1.12.2 and later)
+ * Installer for Forge V1 installer.
  */
 public class V1ClientInstall extends ClientInstall {
     public V1ClientInstall(Install profile, ProgressCallback monitor) {
