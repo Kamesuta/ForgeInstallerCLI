@@ -18,12 +18,15 @@ public class Installer {
      *
      * @param target       Install location
      * @param installerJar Forge installer jar
+     * @param progress     Show progress percentage in console
      * @return true if success
      */
     @SuppressWarnings("unused")
-    public static boolean install(File target, File installerJar) {
+    public static boolean install(File target, File installerJar, boolean progress) {
         // Create progress monitor
-        ProgressCallback monitor = ProgressCallback.withOutputs(System.out);
+        ProgressCallback monitor = progress
+                ? new ConsoleProgressCallback()
+                : ProgressCallback.TO_STD_OUT;
 
         // Setup properties
         // Copied from https://github.com/MinecraftForge/Installer/blob/fe18a16/src/main/java/net/minecraftforge/installer/SimpleInstaller.java#L59-L67

@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 public class Main {
     /**
      * Entry point for Forge Installer CLI.
+     *
      * @param args Command line arguments
      * @throws Throwable If an error occurs
      */
@@ -29,6 +30,7 @@ public class Main {
         }
         Path installerJar = Paths.get(argsList.get(argsList.indexOf("--installer") + 1)).toAbsolutePath();
         Path targetDir = Paths.get(argsList.get(argsList.indexOf("--target") + 1)).toAbsolutePath();
+        boolean progress = argsList.contains("--progress");
 
         // Check Forge installer jar exists
         if (!Files.exists(installerJar)) {
@@ -44,14 +46,16 @@ public class Main {
         }, getParentClassLoader())) {
             // Run Forge installer from class loader
             Class<?> installer = ucl.loadClass("com.kamesuta.forgeinstallercli.Installer");
-            installer.getMethod("install", File.class, File.class).invoke(null, targetDir.toFile(), installerJar.toFile());
+            installer.getMethod("install", File.class, File.class, boolean.class)
+                    .invoke(null, targetDir.toFile(), installerJar.toFile(), progress);
         }
     }
 
     /**
      * Get parent class loader.
-     * @see <a href="https://github.com/MinecraftForge/Installer/blob/fe18a16/src/main/java/net/minecraftforge/installer/actions/PostProcessors.java#L287-L303">PostProcessors.java</a>
+     *
      * @return Parent class loader
+     * @see <a href="https://github.com/MinecraftForge/Installer/blob/fe18a16/src/main/java/net/minecraftforge/installer/actions/PostProcessors.java#L287-L303">PostProcessors.java</a>
      */
     private static ClassLoader getParentClassLoader() {
         if (!System.getProperty("java.version").startsWith("1.")) {
