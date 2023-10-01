@@ -10,8 +10,7 @@ public class ConsoleProgressCallback implements ProgressCallback {
 
     @Override
     public void message(String message, MessagePriority priority) {
-        System.out.println(message);
-        System.out.flush();
+        System.out.println("[Forge Installer] " + message);
     }
 
     @Override
